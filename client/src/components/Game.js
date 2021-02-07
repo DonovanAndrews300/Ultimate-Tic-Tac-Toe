@@ -13,9 +13,35 @@ class Game extends React.Component {
       gameActive:true
   };
     this.handleGameStateUpdate = this.handleGameStateUpdate.bind(this)
+    this.socket = new WebSocket('ws://localhost:4000');
 
-    //this.initGameState();
+   
 }
+
+componentDidMount(){
+ this.initWebSocket()
+}
+
+  initWebSocket(){
+    this.socket.addEventListener('open', () =>  {
+      console.log("connected to websockt server")
+  
+    this.socket.addEventListener('message', (event) => {
+      const parsedData = JSON.parse(event.data)
+     if(parsedData != this.state){
+       const { game, currentPlayer,  gameActive} = parsedData
+      console.log("incoming message is ", game,currentPlayer, gameActive)
+      this.setState({
+        game,
+        gameActive
+      })
+     }
+    })
+   
+    })
+  }
+
+
 
   
 
@@ -46,6 +72,7 @@ class Game extends React.Component {
     }
     
     this.state.game[cellIndex] = currentPlayer
+    
     this.handleResult()
 
 }
@@ -96,17 +123,12 @@ showResults(){
     });
 
 
-    if (roundWon) {
-        this.setState({gameActive:false});
+    if (roundWon || roundDraw) {
+        this.setState({gameActive:false},() => this.socket.send(JSON.stringify(this.state)));
       return
     }
 
-
-    if (roundDraw) {
-      this.setState({gameActive:false});
-      return
-    }
-
+    this.socket.send(JSON.stringify(this.state));
     return
 }
 
