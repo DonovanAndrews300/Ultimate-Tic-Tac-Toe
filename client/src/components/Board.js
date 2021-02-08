@@ -25,6 +25,7 @@ export default class Board extends React.Component {
       return (
         <div className={"board"}>
           <div className="status">{'Tic-Tac-Toe Ultimate Showdown!'}</div>
+          <div >{'Share with a friend to start a game!'}</div>
           <div className="board-row">
               {
                 //Update the grid with the current player index
