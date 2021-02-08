@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Board from './Board'
+import ReactHowler from 'react-howler'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import { faVolumeUp, faVolumeMute} from '@fortawesome/free-solid-svg-icons'
 
 
 class Game extends React.Component {
@@ -8,18 +12,21 @@ class Game extends React.Component {
   constructor() {
     super()
     this.state = {
+      themeOn:true,
       game: [ '', '', '', '', '', '', '', '', '' ],
       currentPlayer :null,
       gameActive:true
   };
     this.handleGameStateUpdate = this.handleGameStateUpdate.bind(this)
     this.socket = new WebSocket('ws://localhost:4000');
+    
 
    
 }
 
 componentDidMount(){
  this.initWebSocket()
+ 
 }
 
   initWebSocket(){
@@ -41,7 +48,7 @@ componentDidMount(){
     })
   }
 
-
+  
 
   
 
@@ -141,22 +148,45 @@ showResults(){
       currentPlayer :null,
       gameActive:true
   })
-
 }
+
+  handleGameTheme(){
+    if(this.state.themeOn === true){
+      this.setState({themeOn:false})
+      return
+    }
+    else{
+      this.setState({themeOn:true})
+      return
+    }
+        
+  }
   
 
 
   render() {
+
     return (
       <div className="game">
         <div className="game-board">
           <Board gameState={this.state} updateGameState={this.handleGameStateUpdate}/>
         </div>
         <div className="game-info">
-      
-          <div>{this.showResults()}
-          </div>
+
+        <ReactHowler
+        src={['themesong.mp3']}
+        playing={this.state.themeOn}
+        loop={true}
+      />
+          <div>{this.showResults()}</div>
           <ol><button onClick={() => this.handleRestartGame()}>{"Restart"}</button></ol>
+          {
+            this.state.themeOn ?
+            <ol><button onClick={() => this.handleGameTheme() }><FontAwesomeIcon icon={faVolumeUp}/></button>
+            </ol>
+            :
+            <ol><button onClick={() => this.handleGameTheme() }><FontAwesomeIcon icon={faVolumeMute}/></button></ol>
+          }
         </div>
       </div>
     );
