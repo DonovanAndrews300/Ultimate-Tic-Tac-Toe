@@ -9,7 +9,7 @@ const server = require('http').createServer(app);
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ server });
 
-app.use(express.static('client/build'))
+app.use(express.static('client'))
 wss.on('connection', (ws) => {
     console.log("Websocket connection formed")
 
